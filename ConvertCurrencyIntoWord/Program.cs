@@ -4,9 +4,9 @@ namespace ConvertCurrencyIntoWord
 {
     public static class Program
     {
-        static string[] ones = new string[] { "", "One", "Two", "Three", "Four", "Five", "Six", "Seven", "Eight", "Nine" };
-        static string[] teens = new string[] { "Ten", "Eleven", "Twelve", "Thirteen", "Fourteen", "Fifteen", "Sixteen", "Seventeen", "Eighteen", "Nineteen" };
-        static string[] tens = new string[] { "Twenty", "Thirty", "Forty", "Fifty", "Sixty", "Seventy", "Eighty", "Ninety" };
+        static string[] ones = new string[] { "", "one", "two", "three", "four", "five", "six", "seven", "eight", "nine" };
+        static string[] teens = new string[] { "ten", "eleven", "twelve", "thirteen", "fourteen", "fifteen", "sixteen", "seventeen", "eighteen", "nineteen" };
+        static string[] tens = new string[] { "twenty", "thirty", "forty", "fifty", "sixty", "seventy", "eighty", "ninety" };
 
         static int dolars = 0;
         static int cents = 0;
@@ -35,24 +35,26 @@ namespace ConvertCurrencyIntoWord
         {
             if (cents < 10)
             {
-                if (cents == 1) centsWord = ones[cents] + " cent";
-                else centsWord = ones[cents] + " cents";
+                if (cents == 0) centsWord = " and zero cents";
+                else if (cents == 1) centsWord = " and " + ones[cents] + " cent";
+                else centsWord = " and " + ones[cents] + " cents";
             }
             else if (cents >= 10 && cents < 20)
             {
-                centsWord = teens[cents - 10] + " cents";
+                centsWord = " and " + teens[cents - 10] + " cents";
             }
             else if (cents >= 20 && cents < 100)
             {
-                if (int.Parse(cents.ToString().Substring(1, 1)) == 0) centsWord = tens[int.Parse(cents.ToString().Substring(0, 1)) - 2] + " cents";
-                else centsWord = tens[int.Parse(cents.ToString().Substring(0, 1)) - 2] + "-" + ones[int.Parse(cents.ToString().Substring(1, 1))] + " cents";
+                if (int.Parse(cents.ToString().Substring(1, 1)) == 0) centsWord = " and " + tens[int.Parse(cents.ToString().Substring(0, 1)) - 2] + " cents";
+                else centsWord = " and " + tens[int.Parse(cents.ToString().Substring(0, 1)) - 2] + "-" + ones[int.Parse(cents.ToString().Substring(1, 1))] + " cents";
             }
+
             return centsWord;
         }
 
         public static string showHoundredWord(int isItHoundred)
         {
-            return isItHoundred==0? "":" Houndred ";
+            return isItHoundred==0? "":" houndred ";
         }
         public static string BetweenHoundredAndHoundredThousand(int dolars)
         {
@@ -60,28 +62,32 @@ namespace ConvertCurrencyIntoWord
             {
                 int houndredX = int.Parse(dolars.ToString().Substring(0, 1));
                 int tensX = int.Parse(dolars.ToString().Substring(1, 2));
-                dolarsWord = ones[houndredX] + " Houndred " + LessThanHoundred(tensX);
+
+                dolarsWord = ones[houndredX] + " houndred " + LessThanHoundred(tensX);
             }
             else if (dolars >= 1000 && dolars < 10000)
             {
                 int thousandX = int.Parse(dolars.ToString().Substring(0, 1));
                 int houndredX = int.Parse(dolars.ToString().Substring(1, 1));
                 int tensX = int.Parse(dolars.ToString().Substring(2, 2));
-                dolarsWord = ones[thousandX] + " Thousand " + ones[houndredX] + " Houndred " + LessThanHoundred(tensX);
+
+                dolarsWord = ones[thousandX] + " thousand " + (houndredX==0? "": ones[houndredX] + " houndred ") + LessThanHoundred(tensX);
             }
             else if (dolars >= 10000 && dolars < 20000)
             {
                 int thousandX = int.Parse(dolars.ToString().Substring(0, 2));
                 int houndredX = int.Parse(dolars.ToString().Substring(2, 1));
                 int tensX = int.Parse(dolars.ToString().Substring(3, 2));
-                dolarsWord = teens[thousandX - 10] + " Thousand " + ones[houndredX] + " Houndred " + LessThanHoundred(tensX);
+
+                dolarsWord = teens[thousandX - 10] + " thousand " + (houndredX == 0 ? "" : ones[houndredX] + " houndred ") + LessThanHoundred(tensX);
             }
             else if (dolars >= 20000 && dolars < 100000)
             {
                 string tensThousandX = tens[int.Parse(dolars.ToString().Substring(0, 1)) - 2] + "-" + ones[int.Parse(dolars.ToString().Substring(1, 1))];
                 int houndredX = int.Parse(dolars.ToString().Substring(2, 1));
                 int tensX = int.Parse(dolars.ToString().Substring(3, 2));
-                dolarsWord = tensThousandX + " Thousand " + ones[houndredX] + " Houndred " + LessThanHoundred(tensX);
+
+                dolarsWord = tensThousandX + " thousand " + (houndredX == 0 ? "" : ones[houndredX] + " houndred ") + LessThanHoundred(tensX);
             }
             return dolarsWord;
         }
@@ -92,7 +98,8 @@ namespace ConvertCurrencyIntoWord
             {
                 int houndredThousandX = int.Parse(dolars.ToString().Substring(0, 1));
                 int thousandX = int.Parse(dolars.ToString().Substring(1, 5));
-                dolarsWord = ones[houndredThousandX] + " Houndred " + (thousandX==0 ? " Thousand ":BetweenHoundredAndHoundredThousand(thousandX));
+
+                dolarsWord = ones[houndredThousandX] + " houndred " + (thousandX == 0 ? " thousand " : BetweenHoundredAndHoundredThousand(thousandX));
             }
             else if (dolars >= 1000000 && dolars < 10000000)
             {
@@ -100,7 +107,7 @@ namespace ConvertCurrencyIntoWord
                 int houndredThousandX = int.Parse(dolars.ToString().Substring(1, 1));
                 int thousandX = int.Parse(dolars.ToString().Substring(2, 5));
 
-                dolarsWord = ones[millionX] + " Million " + ones[houndredThousandX] + " Houndred " + (thousandX == 0 ? " Thousand " : BetweenHoundredAndHoundredThousand(thousandX));
+                dolarsWord = ones[millionX] + " million " + (houndredThousandX == 0 ? " dolars" : ones[houndredThousandX] + " houndred ") + (thousandX == 0 ? "" : "thousand " + BetweenHoundredAndHoundredThousand(thousandX));
 
             }
             else if (dolars >= 10000000 && dolars < 20000000)
@@ -109,7 +116,7 @@ namespace ConvertCurrencyIntoWord
                 int houndredThousandX = int.Parse(dolars.ToString().Substring(2, 1));
                 int thousandX = int.Parse(dolars.ToString().Substring(3, 5));
 
-                dolarsWord = teens[millionX] + " Million " + ones[houndredThousandX] + " Houndred " + (thousandX == 0 ? " Thousand " : BetweenHoundredAndHoundredThousand(thousandX));
+                dolarsWord = teens[millionX] + " million " + (houndredThousandX == 0 ? " dolars" : ones[houndredThousandX] + " houndred ") + (thousandX == 0 ? "" : "thousand " + BetweenHoundredAndHoundredThousand(thousandX));
 
             }
             else if (dolars >= 20000000 && dolars < 100000000)
@@ -118,10 +125,19 @@ namespace ConvertCurrencyIntoWord
                 int houndredThousandX = int.Parse(dolars.ToString().Substring(2, 1));
                 int thousandX = int.Parse(dolars.ToString().Substring(3, 5));
 
-                dolarsWord = tensMillionX + " Million " + ones[houndredThousandX] + " Houndred " + (thousandX == 0 ? " Thousand " : BetweenHoundredAndHoundredThousand(thousandX));
+                dolarsWord = tensMillionX + " million " + (houndredThousandX == 0 ? "" : ones[houndredThousandX] + " houndred ") + (thousandX == 0 ? "" : "thousand " + BetweenHoundredAndHoundredThousand(thousandX));
 
             }
+            else dolarsWord = " million ";
             return dolarsWord;
+        }
+
+        public static string BetweenHoundredMillionsAndBillion(int dolars)
+        {
+            int houndredMillionX = int.Parse(dolars.ToString().Substring(0, 1));
+            int hugeValue = int.Parse(dolars.ToString().Substring(1, 8));
+
+            return ones[houndredMillionX] + " houndred " + BetweenHoundredThousandAndHoundredMilions(hugeValue);
         }
 
         static void Main()
@@ -152,11 +168,10 @@ namespace ConvertCurrencyIntoWord
                 {
                     dolars = int.Parse(value);
                     cents = 0;
-                    centsWord = " Zero cents";
                 }
 
                 //dolars
-                if (dolars == 0) dolarsWord = "Zero dolars";
+                if (dolars == 0) dolarsWord = "zero dolars";
                 else if (dolars < 100)
                 {
                     LessThanHoundred(dolars);
@@ -171,18 +186,12 @@ namespace ConvertCurrencyIntoWord
                 }
                 else if (dolars >= 100000000 && dolars < 1000000000)
                 {
-                    int houndredMillionX = int.Parse(dolars.ToString().Substring(0, 1));
-
-                    int hugeValue = int.Parse(dolars.ToString().Substring(1, 8));
-
-                    dolarsWord = ones[houndredMillionX] + " Houndred " + BetweenHoundredThousandAndHoundredMilions(hugeValue);
-
+                    BetweenHoundredMillionsAndBillion(dolars);
                 }
+                //cents
+                Cents(cents);
 
-                if (cents != 0) Cents(cents);
-
-
-                Console.Write("\n" + "\n" + dolarsWord + " and "+ centsWord + "\n" + "\n" + "\n" + "\n");
+                Console.Write("\n" + "\n" + dolarsWord + centsWord + "\n" + "\n" + "\n" + "\n");
                 Console.Write("Click any key to continue");
 
 
